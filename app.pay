@@ -1,0 +1,75 @@
+import streamlit as st
+
+# Dummy database (Replace this with Firebase in future)
+users = {"testuser": "password123"}  # username: password
+
+# Initialize session state
+if "logged_in" not in st.session_state:
+    st.session_state["logged_in"] = False
+    st.session_state["username"] = ""
+
+# Login Function
+def login():
+    st.title("🔐 Login to Continue")
+    
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    
+    if st.button("Login"):
+        if username in users and users[username] == password:
+            st.session_state["logged_in"] = True
+            st.session_state["username"] = username
+            st.success("✅ Login Successful! Redirecting...")
+            st.experimental_rerun()
+        else:
+            st.error("❌ Invalid username or password")
+
+# Signup Function
+def signup():
+    st.title("📝 Create a New Account")
+    
+    new_username = st.text_input("Choose a Username")
+    new_password = st.text_input("Choose a Password", type="password")
+    
+    if st.button("Sign Up"):
+        if new_username in users:
+            st.error("⚠️ Username already exists! Try another.")
+        else:
+            users[new_username] = new_password  # Save user (Only for this session)
+            st.success("✅ Account Created! Now Login.")
+            st.experimental_rerun()
+
+# Logout Function
+def logout():
+    st.session_state["logged_in"] = False
+    st.session_state["username"] = ""
+    st.experimental_rerun()
+
+# Main App
+if not st.session_state["logged_in"]:
+    page = st.sidebar.radio("Navigation", ["Login", "Sign Up"])
+    if page == "Login":
+        login()
+    else:
+        signup()
+else:
+    st.title(f"🎉 Welcome, {st.session_state['username']}!")
+    
+    st.sidebar.button("Logout", on_click=logout)  # Logout Button
+    
+    # Show Task Web App UI (Existing Code)
+    st.header("Complete Tasks & Earn Rewards")
+    
+    st.subheader("✅ Complete Tasks")
+    st.button("Watch Ad (5 Coins)")
+    st.button("Complete Survey (5 Coins)")
+    st.button("Install App (5 Coins)")
+    
+    st.subheader("👥 Referral System")
+    st.button("Refer a Friend (5 Coins)")
+    
+    st.subheader("🎯 Click Ads")
+    st.button("Click Ad (5 Coins)")
+    
+    st.subheader("🏆 Your Balance")
+    st.write("Your current balance: **0 Coins**")  # Dummy balance (We can store it later)
